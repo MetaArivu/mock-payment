@@ -1,0 +1,4 @@
+#!/bin/bash
+SERVICE=`cat SERVICE_NAME`
+echo "Scanning $SERVICE for vulnerabilities"
+docker scan metamagic/$SERVICE
