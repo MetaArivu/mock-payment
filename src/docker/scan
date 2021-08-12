@@ -1,4 +1,5 @@
 #!/bin/bash
+ORG=`cat ORG_NAME`
 SERVICE=`cat SERVICE_NAME`
 echo "Scanning $SERVICE for vulnerabilities"
-docker scan metamagic/$SERVICE
+docker scan $ORG/$SERVICE
