@@ -4,6 +4,7 @@ lib
 src/docker/*.jar
 src/docker/libs
 src/docker/*.cid
+src/docker/*.cid.old
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
