@@ -21,6 +21,7 @@ import io.fusion.air.microservice.domain.models.PaymentStatus;
 import io.fusion.air.microservice.domain.models.PaymentType;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
+import io.fusion.air.microservice.server.controller.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,13 +36,15 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * App Controller for the Service
+ * App Controller for the Payment Service
  * 
  * @author arafkarsh
  * @version 1.0
@@ -49,38 +52,21 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Configuration
 @RestController
-@RequestMapping("/api/v1/payment")
+// "/api/v1/payment"
+@RequestMapping("${service.api.path}")
 @RequestScope
 @Tag(name = "Payment", description = "Payment Service ")
-public class AppControllerImpl {
+public class AppControllerImpl extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.
 	private static final Logger log = getLogger(lookup().lookupClass());
 	
 	@Autowired
 	private ServiceConfiguration serviceConfig;
-
 	private String serviceName;
 
 	/**
-	 * Returns the Service Name
-	 * @return
-	 */
-	private String name() {
-		if(serviceName == null) {
-			if(serviceConfig == null) {
-				log.info(LocalDateTime.now() + "|" + name() + "|Error Autowiring Service config!!!");
-				serviceName = "NoServiceName";
-			} else {
-				serviceName = serviceConfig.getServiceName() + "Service";
-				log.info("|"+name()+"|Version="+ServiceHelp.VERSION);
-			}
-		}
-		return serviceName;
-	}
-
-	/**
-	 * Get Method Call to Check the Health of the App
+	 * Get the Payment Status
 	 * 
 	 * @return
 	 */
@@ -95,10 +81,15 @@ public class AppControllerImpl {
     })
 	@GetMapping("/status/{referenceNo}")
 	@ResponseBody
-	public ResponseEntity<String> getStatus(@PathVariable("referenceNo") String _referenceNo,
+	public ResponseEntity<Map<String,Object>> getStatus(@PathVariable("referenceNo") String _referenceNo,
 			HttpServletRequest request) throws Exception {
-		log.info("|"+name()+"|Request to Payment Status of Service... ");
-		return ResponseEntity.ok("200:Service-Health-OK");
+		log.info("|"+name()+"|Request to Payment Status of Service... "+_referenceNo);
+		HashMap<String,Object> status = new HashMap<String,Object>();
+		status.put("Code", 200);
+		status.put("Status", true);
+		status.put("ReferenceNo", _referenceNo);
+		status.put("Message","Payment Pending.");
+		return ResponseEntity.ok(status);
 	}
 
 	/**
@@ -113,7 +104,7 @@ public class AppControllerImpl {
             description = "Unable to process the payment",
             content = @Content)
     })
-    @PostMapping("/processPayments")
+    @PostMapping("/process")
     public ResponseEntity<PaymentStatus> processPayments(@RequestBody PaymentDetails _payDetails) {
 		log.info("|"+name()+"|Request to process payments... ");
 		PaymentStatus ps = new PaymentStatus(
@@ -139,9 +130,14 @@ public class AppControllerImpl {
 					content = @Content)
 	})
 	@DeleteMapping("/cancel/{referenceNo}")
-	public ResponseEntity<String> cancel(@PathVariable("referenceNo") String _referenceNo) {
-		log.info("|"+name()+"|Request to process payments... ");
-		return ResponseEntity.ok("200:Cancellation-OK");
+	public ResponseEntity<Map<String,Object>> cancel(@PathVariable("referenceNo") String _referenceNo) {
+		log.info("|"+name()+"|Request to process payments... "+_referenceNo);
+		HashMap<String,Object> status = new HashMap<String,Object>();
+		status.put("Code", 200);
+		status.put("Status", true);
+		status.put("ReferenceNo", _referenceNo);
+		status.put("Message","Payment Cancelled.");
+		return ResponseEntity.ok(status);
 	}
 
 	/**
@@ -157,27 +153,14 @@ public class AppControllerImpl {
 					content = @Content)
 	})
 	@PutMapping("/update/{referenceNo}")
-	public ResponseEntity<String> updatePayment(@PathVariable("referenceNo") String _referenceNo) {
-		log.info("|"+name()+"|Request to Update payments... ");
-		return ResponseEntity.ok("200:Update-OK");
-	}
-
-	/**
-	 * Print the Request
-	 * 
-	 * @param request
-	 * @return
-	 */
-	private String printRequestURI(HttpServletRequest request) {
-		StringBuilder sb = new StringBuilder();
-		String[] req = request.getRequestURI().split("/");
-		sb.append("Params Size = "+req.length+" : ");
-		for(int x=0; x < req.length; x++) {
-			sb.append(req[x]).append("|");
-		}
- 		sb.append("\n");
-		log.info(sb.toString());
-		return sb.toString();
+	public ResponseEntity<Map<String,Object>> updatePayment(@PathVariable("referenceNo") String _referenceNo) {
+		log.info("|"+name()+"|Request to Update payments... "+_referenceNo);
+		HashMap<String,Object> status = new HashMap<String,Object>();
+		status.put("Code", 200);
+		status.put("Status", true);
+		status.put("ReferenceNo", _referenceNo);
+		status.put("Message","Payment Updated.");
+		return ResponseEntity.ok(status);
 	}
  }
 

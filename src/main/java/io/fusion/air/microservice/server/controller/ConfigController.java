@@ -17,13 +17,9 @@ package io.fusion.air.microservice.server.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.fusion.air.microservice.ServiceBootStrap;
 import io.fusion.air.microservice.server.config.ConfigMap;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
-import io.fusion.air.microservice.server.models.EchoData;
-import io.fusion.air.microservice.server.models.EchoResponseData;
-import io.fusion.air.microservice.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,18 +40,18 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Health Controller for the Service
+ * Config Controller for the Service
  * 
  * @author arafkarsh
  * @version 1.0
- * 
  */
 @Configuration
 @RestController
-@RequestMapping("/api/v1/payments/config")
+//  "/api/v1/payments/config"
+@RequestMapping("${service.api.path}"+ServiceConfiguration.CONFIG)
 @RequestScope
-@Tag(name = "System", description = "System (Health, Readiness, ReStart.. etc)")
-public class ConfigController {
+@Tag(name = "System", description = "Config (Environment, Secrets, ConfigMap.. etc)")
+public class ConfigController extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.
 	private static final Logger log = getLogger(lookup().lookupClass());
@@ -66,28 +62,10 @@ public class ConfigController {
 					+ ServiceHelp.NL
 					;
 
-
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 	private String serviceName;
 
-	/**
-	 * Returns the Service Name
-	 * @return
-	 */
-	private String name() {
-		if(serviceName == null) {
-			if(serviceConfig == null) {
-				log.info("|Error Autowiring Service config!!!");
-				serviceName = "|NoServiceName";
-			} else {
-				serviceName = "|" + serviceConfig.getServiceName() + "Service";
-				log.info("|Version="+ServiceHelp.VERSION);
-			}
-		}
-		return serviceName;
-	}
-	
 	@Operation(summary = "Show the Environment Settings ")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
@@ -149,38 +127,21 @@ public class ConfigController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Service Log Level Check",
-            content = {@Content(mediaType = "application/json")}),
+            content = {@Content(mediaType = "application/text")}),
             @ApiResponse(responseCode = "404",
             description = "Service is not ready.",
             content = @Content)
     })
 	@GetMapping("/log")
     public String log() {
-		log.info("|Request to Log Level.. ");
-    	log.trace("HealthService|This is TRACE level message");
-        log.debug("HealthService|This is a DEBUG level message");
-        log.info("HealthService|This is an INFO level message");
-        log.warn("HealthService|This is a WARN level message");
-        log.error("HealthService|This is an ERROR level message");
-        return "HealthService|See the log for details";
+		log.info(name()+"|Request to Log Level.. ");
+    	log.trace(name()+"|This is TRACE level message");
+        log.debug(name()+"|This is a DEBUG level message");
+        log.info(name()+"|This is an INFO level message");
+        log.warn(name()+"|This is a WARN level message");
+        log.error(name()+"|This is an ERROR level message");
+        return name()+"|See the log for details";
     }
 	
-	/**
-	 * Print the Request
-	 * 
-	 * @param request
-	 * @return
-	 */
-	private String printRequestURI(HttpServletRequest request) {
-		StringBuilder sb = new StringBuilder();
-		String[] req = request.getRequestURI().split("/");
-		sb.append("Params Size = "+req.length+" : ");
-		for(int x=0; x < req.length; x++) {
-			sb.append(req[x]).append("|");
-		}
- 		sb.append("\n");
-		log.info(sb.toString());
-		return sb.toString();
-	}
  }
 

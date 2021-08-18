@@ -30,16 +30,22 @@ import io.fusion.air.microservice.utils.Utils;
  */
 public class EchoData {
 	
-	@JsonSerialize()
 	private String word;
-	@JsonSerialize()
 	private int day;
 	
 	@JsonSerialize(using = DateJsonSerializer.class)
 	private LocalDateTime requestTime;
+
+	/**
+	 * Echo Constructor
+	 */
+	public EchoData() {
+		this("Jane Doe");
+	}
 	
 	/**
-	 * @param word
+	 * Echo Constructor
+	 * @param _wordData
 	 */
 	public EchoData(String _wordData) {
 		this.word = _wordData;

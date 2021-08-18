@@ -35,10 +35,6 @@ import org.springframework.web.context.annotation.RequestScope;
 // Logging System
 import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import static java.lang.invoke.MethodHandles.lookup;
 
 import io.fusion.air.microservice.ServiceBootStrap;
@@ -49,6 +45,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Health Controller for the Service
  * 
@@ -58,10 +57,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 @Configuration
 @RestController
-@RequestMapping("/api/v1/payments/service")
+// "/api/v1/payments/service"
+@RequestMapping("${service.api.path}"+ServiceConfiguration.HEALTH)
 @RequestScope
-@Tag(name = "System", description = "System (Health, Readiness, ReStart.. etc)")
-public class HealthController {
+@Tag(name = "System", description = "Health (Liveness, Readiness, ReStart.. etc)")
+public class HealthController extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.
 	private static final Logger log = getLogger(lookup().lookupClass());
@@ -78,23 +78,6 @@ public class HealthController {
 	private String serviceName;
 
 	/**
-	 * Returns the Service Name
-	 * @return
-	 */
-	private String name() {
-		if(serviceName == null) {
-			if(serviceConfig == null) {
-				log.info("|Error Autowiring Service config!!!");
-				serviceName = "|NoServiceName";
-			} else {
-				serviceName = "|" + serviceConfig.getServiceName() + "Service";
-				log.info("|Version="+ServiceHelp.VERSION);
-			}
-		}
-		return serviceName;
-	}
-	
-	/**
 	 * Get Method Call to Check the Health of the App
 	 * 
 	 * @return
@@ -108,12 +91,16 @@ public class HealthController {
             description = "Service is in bad health.",
             content = @Content)
     })
-	@GetMapping("/health")
+	@GetMapping("/live")
 	@ResponseBody
-	public ResponseEntity<String> getHealth( 
+	public ResponseEntity<Map<String,Object>> getHealth(
 			HttpServletRequest request) throws Exception {
 		log.info(name()+"|Request to Health of Service... ");
-		return ResponseEntity.ok("200:Service-Health-OK");
+		HashMap<String,Object> status = new HashMap<String,Object>();
+		status.put("Code", 200);
+		status.put("Status", true);
+		status.put("Message","Service is OK!");
+		return ResponseEntity.ok(status);
 	}
     
     @Operation(summary = "Service Readiness Check")
@@ -127,10 +114,14 @@ public class HealthController {
     })
 	@GetMapping("/ready")
 	@ResponseBody
-	public ResponseEntity<String> isReady( 
+	public ResponseEntity<Map<String,Object>> isReady(
 			HttpServletRequest request) throws Exception {
 		log.info(name()+"|Request to Ready Check.. ");
-		return ResponseEntity.ok("200:Service-Ready");
+		HashMap<String,Object> status = new HashMap<String,Object>();
+		status.put("Code", 200);
+		status.put("Status", true);
+		status.put("Message","Service is Ready!");
+		return ResponseEntity.ok(status);
 	}
 
 	/**
@@ -159,18 +150,21 @@ public class HealthController {
      * @param echoData
      * @return
      */
-    @Operation(summary = "Service Remote Echo")
+    @Operation(summary = "Service Echo")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-            description = "Service Remote Echo",
-            content = {@Content(mediaType = "application/json")}),
-            @ApiResponse(responseCode = "404",
-            description = "Service is not ready.",
-            content = @Content)
+            		description = "Service Echo",
+            		content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Service unable to deserialize!",
+					content = @Content),
+			@ApiResponse(responseCode = "404",
+            		description = "Service unable to do Echo!",
+            		content = @Content)
     })
-    @PostMapping("/remoteEcho")
+    @PostMapping("/echo")
     public ResponseEntity<EchoResponseData> remoteEcho(@RequestBody EchoData echoData) {
-		log.info(name()+"|Request for RemoteEcho ... "+echoData);
+		log.info(name()+"|Request for Echo ... "+echoData);
     	if(echoData == null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -187,7 +181,7 @@ public class HealthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Service Home",
-            content = {@Content(mediaType = "application/json")}),
+            content = {@Content(mediaType = "application/text")}),
             @ApiResponse(responseCode = "404",
             description = "Service is not ready.",
             content = @Content)
@@ -200,24 +194,6 @@ public class HealthController {
 		sb.append(title);
 		sb.append("<br>");
 		sb.append(printRequestURI(request));
-		return sb.toString();
-	}
-
-	/**
-	 * Print the Request
-	 * 
-	 * @param request
-	 * @return
-	 */
-	private String printRequestURI(HttpServletRequest request) {
-		StringBuilder sb = new StringBuilder();
-		String[] req = request.getRequestURI().split("/");
-		sb.append("Params Size = "+req.length+" : ");
-		for(int x=0; x < req.length; x++) {
-			sb.append(req[x]).append("|");
-		}
- 		sb.append("\n");
-		log.info(sb.toString());
 		return sb.toString();
 	}
  }

@@ -1,9 +1,13 @@
 # =======================================================================
-# Service Name & API Docs
+# Service Name & API Details -  Version, Path
 # =======================================================================
 service.name=Payment
-springdoc.api-docs.path=/api/v1/payments/
-springdoc.swagger-ui.path=/api/v1/payments/swagger-ui.html
+service.api.prefix=api
+service.api.version=v1
+service.api.name=payment
+service.api.repository=https://github.com/MetaArivu/mock-${service.api.name}
+service.api.path=/${service.api.prefix}/${service.api.version}/${service.api.name}
+service.url=http://www.metarivu.com/
 # =======================================================================
 # Micro Service Properties
 # =======================================================================
@@ -27,6 +31,8 @@ remote.protocol=http
 # Open API Properties
 # For More Info: https://springdoc.org/#Introduction
 # =======================================================================
+springdoc.api-docs.path=${service.api.path}/
+springdoc.swagger-ui.path=${service.api.path}/swagger-ui.html
 # Disabling the /v3/api-docs enpoint
 springdoc.api-docs.enabled=true
 # Disabling the swagger-ui

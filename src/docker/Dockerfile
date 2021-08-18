@@ -15,12 +15,14 @@ LABEL author="Araf Karsh Hamid <araf.karsh@metamagic.in>"
 
 RUN mkdir /Softwares/service
 RUN mkdir /Softwares/service/libs
+RUN mkdir /home/arivu/libs
 
 ARG SPRINGBOOT_JAR=*?.?.?-spring-boot.jar
 ARG MAVEN_JAR=*-?.?.?.jar
 
 # Copy Service (Install)
 # COPY --chown=arivu:arivu StartService /Softwares/service/
+COPY --chown=arivu:arivu application.properties /home/arivu/
 
 # SpringBoot Fat Jar
 COPY --chown=arivu:arivu ${SPRINGBOOT_JAR} /Softwares/service/
@@ -28,6 +30,7 @@ COPY --chown=arivu:arivu ${SPRINGBOOT_JAR} /Softwares/service/
 # Maven Thin Jar
 #COPY --chown=arivu:arivu ${MAVEN_JAR} /Softwares/service/
 #COPY --chown=arivu:arivu /libs /Softwares/service/libs/
+#COPY --chown=arivu:arivu /libs /home/arivu/libs/
 
 # Change the Mode
 RUN chmod -R 750 /Softwares/service/*
