@@ -39,5 +39,5 @@ RUN chmod -R 750 /Softwares/service/*
 EXPOSE 9090
 
 # Start Micro Service
-#ENTRYPOINT ["java","-jar","/Softwares/service/payment-service-0.1.0.jar"]
-ENTRYPOINT ["java","-jar","/Softwares/service/payment-service-0.1.0-spring-boot.jar"]
+#ENTRYPOINT ["java","-jar","/Softwares/service/payment-service-0.2.0.jar"]
+ENTRYPOINT ["java","-jar","/Softwares/service/payment-service-0.2.0-spring-boot.jar"]
