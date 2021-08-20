@@ -1,7 +1,12 @@
 #!/bin/bash
-ORG=`cat ORG_NAME`
-SERVICE=`cat SERVICE_NAME`
-echo "docker container run --name $SERVICE -d --rm -p 9030:9090 $ORG/$SERVICE"
-docker container run --name $SERVICE -d --rm -p 9030:9090 $ORG/$SERVICE
+# -------------------------------------------------------------------------------------------
+# @author: Araf Karsh Hamid
+# -------------------------------------------------------------------------------------------
+# Start Container
+# -------------------------------------------------------------------------------------------
+ORG=`../../getServiceName 1`
+SERVICE=`../../getServiceName 4`
+echo "docker container run --name $SERVICE -d --rm -p 9010:9090 $ORG/$SERVICE"
+docker container run --name $SERVICE -d --rm -p 9010:9090 $ORG/$SERVICE
 echo "Container id for $SERVICE ="`docker container ls | grep $SERVICE | tr -s " " | cut -d " " -f 1`
 docker container ls | grep $SERVICE | tr -s " " | cut -d " " -f 1 > $SERVICE.cid

@@ -53,11 +53,11 @@ public class ServiceHelp {
 	
 	public static final String DL = "----------------------------------------------------------------------------";
 	
-	public static final String VERSION = "0.2.0";
+	public static final String VERSION = "0.1.0";
 	
 	public static final String LOGO = "" +NL
 	+"============================================================================" + NL
-	+":: SIGMA Service :: (v"+VERSION+") " + NL
+	+":: SIGMA Service :: (VERSION) " + NL
 	+"============================================================================" + NL;
 		 
 

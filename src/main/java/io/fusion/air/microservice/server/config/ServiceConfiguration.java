@@ -51,6 +51,7 @@ public class ServiceConfiguration implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("\"springdoc.swagger-ui.path\": \"").append(apiDocPath).append("\",");
+		sb.append("\"service.org\": \"").append(serviceOrg).append("\",");
 		sb.append("\"service.name\": \"").append(serviceName).append("\",");
 		sb.append("\"service.api.prefix\": \"").append(serviceApiPrefix).append("\",");
 		sb.append("\"service.api.version\": \"").append(serviceApiVersion).append("\",");
@@ -77,6 +78,9 @@ public class ServiceConfiguration implements Serializable {
 	// Health Path
 	public static final String HEALTH = "/service";
 
+	@Value("${service.org:OrgNotDefined}")
+	private String serviceOrg;
+
 	@Value("${service.name:NameNotDefined}")
 	private String serviceName;
 
@@ -91,6 +95,9 @@ public class ServiceConfiguration implements Serializable {
 
 	@Value("${service.api.path:PATH}")
 	private String serviceApiPath;
+
+	@Value("${service.container:ContainerName}")
+	private String serviceContainer;
 
 	@Value("${service.api.repository:GitRepo}")
 	private String serviceApiRepository;
@@ -321,5 +328,13 @@ public class ServiceConfiguration implements Serializable {
 
 	public String getServiceUrl() {
 		return serviceUrl;
+	}
+
+	public String getServiceOrg() {
+		return serviceOrg;
+	}
+
+	public String getServiceContainer() {
+		return serviceContainer;
 	}
 }
